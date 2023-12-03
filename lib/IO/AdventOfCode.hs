@@ -1,7 +1,9 @@
-module IO.AdventOfCode (solves) where
+module IO.AdventOfCode (solves, Solution) where
 import Control.Monad ((<=<))
 
-solves :: ([String] -> a) -> FilePath -> IO a
+type Solution = [String] -> String
+
+solves :: ([String] -> String) -> FilePath -> IO String
 solves solve = fmap (solve . lines) 
              . readFile . (<> ".txt") . ("./input/" <>)
 

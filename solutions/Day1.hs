@@ -8,8 +8,10 @@ import Data.Either (fromRight)
 import Data.Functor (($>))
 import Control.Applicative (some)
 import Data.Maybe (fromMaybe)
+import IO.AdventOfCode (Solution)
 
-day1 = sum . map lineValue
+day1 :: Solution
+day1 = show . sum . map lineValue
   where
     lineValue = read
               . ([head, last] ??)
