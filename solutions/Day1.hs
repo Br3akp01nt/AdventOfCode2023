@@ -1,6 +1,6 @@
 module Day1 (day1) where
 
-import Data.Char (isNumber)
+import Data.Char (isNumber, isDigit)
 import Control.Lens ((??))
 import Control.Monad (void)
 import qualified Text.Parsec as P
@@ -8,10 +8,20 @@ import Data.Either (fromRight)
 import Data.Functor (($>))
 import Control.Applicative (some)
 import Data.Maybe (fromMaybe)
-import IO.AdventOfCode (Solution)
+import IO.AdventOfCode (Solution, SolutionPart)
 
 day1 :: Solution
-day1 = show . sum . map lineValue
+day1 = (part1, part2)
+
+part1 :: SolutionPart
+part1 = show . sum . map lineValue
+  where
+    lineValue = read
+              . ([head, last] ??)
+              . filter isDigit
+
+part2 :: SolutionPart
+part2 = show . sum . map lineValue
   where
     lineValue = read
               . ([head, last] ??)

@@ -8,7 +8,7 @@ import Data.Either (fromRight)
 import Data.List (maximumBy)
 import Data.Ord (comparing)
 import Data.Function (on)
-import IO.AdventOfCode (Solution)
+import IO.AdventOfCode (Solution, SolutionPart)
 import Debug.Trace (trace)
 
 type Handful = [GameCube]
@@ -20,6 +20,19 @@ data Game = Game
   { gameIndex :: Int
   , gameHandfuls :: [Handful]
   } deriving Show
+
+day2 :: Solution
+day2 = (part1, part2)
+
+part1 :: SolutionPart
+part1 = show 
+      . sum
+      . map gameIndex
+      . filter (isValidGame availableCubes)
+      . map parseGame
+
+part2 :: SolutionPart
+part2 = const "notImplemented"
 
 minShownCubes :: Game -> [GameCube]
 minShownCubes (Game _ hs) = concatMap maximumSeenColor [Green, Red, Blue] 
@@ -34,16 +47,13 @@ isValidGame availableCubes g =
   where
     shown = minShownCubes g
 
-day2 :: Solution
-day2 = show 
-     . sum
-     . map gameIndex
-     . filter (isValidGame availableCubes)
-     . map parseGame
-  where
-    availableCubes = concatMap (uncurry replicate) [(12, Red), (13, Green), (14, Blue)]
-    parseGame = either (error . show) id . P.parse gameParser ""
+availableCubes :: [GameCube]
+availableCubes = concatMap (uncurry replicate) [(12, Red), (13, Green), (14, Blue)]
 
+parseGame :: String -> Game
+parseGame = either (error . show) id 
+          . P.parse gameParser ""
+  where
     gameParser :: P.Parsec String () Game
     gameParser = do
         void $ P.string "Game "
