@@ -9,7 +9,6 @@ import Data.List (maximumBy)
 import Data.Ord (comparing)
 import Data.Function (on)
 import IO.AdventOfCode (Solution, SolutionPart)
-import Debug.Trace (trace)
 
 type Handful = [GameCube]
 
@@ -32,7 +31,14 @@ part1 = show
       . map parseGame
 
 part2 :: SolutionPart
-part2 = const "notImplemented"
+part2 = show 
+      . sum
+      . map (minGameProduct . parseGame)
+  where
+    minGameProduct g = 
+      let mc = minShownCubes g
+       in product $ map (\color -> length $ filter (== color) mc) 
+                        [Green, Red, Blue]
 
 minShownCubes :: Game -> [GameCube]
 minShownCubes (Game _ hs) = concatMap maximumSeenColor [Green, Red, Blue] 
