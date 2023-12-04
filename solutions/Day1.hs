@@ -1,13 +1,11 @@
 module Day1 (day1) where
 
-import Data.Char (isNumber, isDigit)
+import Data.Char (isDigit)
 import Control.Lens ((??))
 import Control.Monad (void)
 import qualified Text.Parsec as P
-import Data.Either (fromRight)
-import Data.Functor (($>))
-import Control.Applicative (some)
-import Data.Maybe (fromMaybe)
+import Control.Applicative (some, Alternative (many))
+import Data.Maybe (catMaybes)
 import IO.AdventOfCode (Solution, SolutionPart)
 
 day1 :: Solution
@@ -26,32 +24,32 @@ part2 = show . sum . map lineValue
     lineValue = read
               . ([head, last] ??)
               . concatMap show
-              . fromRight []
+              . either (error . show) id
               . P.parse trebuchetLineParser ""
 
 trebuchetLineParser :: P.Parsec String () [Int]
-trebuchetLineParser = fmap concat $ P.many $ do
-    digitAtCurPos <- P.lookAhead
-                   $ P.choice
-                   $ map P.try
-                   $ concat
-                   [ [ Just . read . pure <$> P.digit ]
-                   , map (\(s, n) -> P.string s $> Just n) numstrings
-                   , [ P.anyChar $> Nothing ]
-                   ]
-    void P.anyChar
-    remainingDigits <- trebuchetLineParser
-    pure $ maybe [] pure digitAtCurPos <> remainingDigits
+trebuchetLineParser = fmap catMaybes 
+                    $ many 
+                    $ P.choice [ Just <$> stepLookAhead stringDigit
+                               , Just . read <$> some P.digit 
+                               , Nothing <$ P.anyChar 
+                               ]
 
-numstrings =
-    [ ("one",    1)
-    , ("two",    2)
-    , ("three",  3)
-    , ("four",   4)
-    , ("five",   5)
-    , ("six",    6)
-    , ("seven",  7)
-    , ("eight",  8)
-    , ("nine",   9)
-    , ("ten",   10)
-    ]
+stepLookAhead :: P.Parsec String m a -> P.Parsec String m a
+stepLookAhead p = fst <$> ((,) <$> P.lookAhead p <*> P.anyChar)
+
+stringDigit :: P.Parsec String m Int
+stringDigit = P.choice $ (\(s, n) -> n <$ P.try (P.string s)) <$> numstrings
+  where
+    numstrings =
+        [ ("one",    1)
+        , ("two",    2)
+        , ("three",  3)
+        , ("four",   4)
+        , ("five",   5)
+        , ("six",    6)
+        , ("seven",  7)
+        , ("eight",  8)
+        , ("nine",   9)
+        , ("ten",   10)
+        ]
