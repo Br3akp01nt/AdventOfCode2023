@@ -53,3 +53,4 @@ stringDigit = P.choice $ (\(s, n) -> n <$ P.try (P.string s)) <$> numstrings
         , ("nine",   9)
         , ("ten",   10)
         ]
+
