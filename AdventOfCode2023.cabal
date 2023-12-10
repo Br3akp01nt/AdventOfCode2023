@@ -26,14 +26,16 @@ executable AdventOfCode2023
 
     -- Modules included in this executable, other than Main.
     other-modules: Day1,
-                   Day2
+                   Day2,
+                   Day3
 
     -- LANGUAGE extensions used by modules in this package.
     -- other-extensions:
     build-depends:    base ^>=4.16.4.0,
                       lib,
                       lens ^>=5.2.3,
-                      parsec
+                      parsec,
+                      comonad
     hs-source-dirs:   solutions
     default-language: Haskell2010
 
